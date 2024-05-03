@@ -1,0 +1,1 @@
+This is the way: <https://github.com/include-what-you-use/include-what-you-use/blob/master/CMakeLists.txt>
