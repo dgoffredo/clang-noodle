@@ -11,72 +11,9 @@ using namespace llvm;
 using namespace clang;
 using namespace clang::ast_matchers;
 
-/*
 StatementMatcher LoopMatcher =
-  forStmt(hasLoopInit(declStmt(hasSingleDecl(varDecl(
-    hasInitializer(integerLiteral(equals(0)))))))).bind("forLoop");
-
-(.bind "forLoop" forStmt
-  (hasLoopInit
-    (declStmt
-      (hasSingleDecl
-        (varDecl
-          (hasInitializer
-            (integerLiteral (equals 0))))))))
-*/
-
-StatementMatcher LoopMatcher =
-    forStmt(hasLoopInit(declStmt(
-                hasSingleDecl(varDecl(hasInitializer(integerLiteral(equals(0))))
-                                  .bind("initVarName")))),
-            hasIncrement(unaryOperator(
-                hasOperatorName("++"),
-                hasUnaryOperand(declRefExpr(
-                    to(varDecl(hasType(isInteger())).bind("incVarName")))))),
-            hasCondition(ignoringParenImpCasts(binaryOperator(
-                hasOperatorName("<"),
-                hasLHS(ignoringParenImpCasts(declRefExpr(
-                    to(varDecl(hasType(isInteger())).bind("condVarName"))))),
-                hasRHS(expr(hasType(isInteger()))))))).bind("forLoop");
-
-/*
-forStmt(hasLoopInit(declStmt(
-            hasSingleDecl(varDecl(hasInitializer(integerLiteral(equals(0))))
-                              .bind("initVarName")))),
-        hasIncrement(unaryOperator(
-            hasOperatorName("++"),
-            hasUnaryOperand(declRefExpr(
-                to(varDecl(hasType(isInteger())).bind("incVarName")))))),
-        hasCondition(binaryOperator(
-            hasOperatorName("<"),
-            hasLHS(ignoringParenImpCasts(declRefExpr(
-                to(varDecl(hasType(isInteger())).bind("condVarName"))))),
-            hasRHS(expr(hasType(isInteger())))))).bind("forLoop");
-
-(.bind "forLoop" forStmt
-  (hasLoopInit
-    (declStmt
-      (hasSingleDecl
-        (.bind "initVarName" varDecl
-          (hasInitializer (integerLiteral (equals 0)))))))
-  (hasIncrement
-    (unaryOperator
-      (hasOperatorName "++")
-      (hasUnaryOperand
-        (declRefExpr
-          (to
-            (.bind "incVarName" varDecl (hasType (isInteger))))))))
-  (hasCondition
-    (binaryOperator
-      (hasOperatorName "<")
-      (hasLHS
-        (ignoringParenImpCasts
-          (declRefExpr
-            (to
-              (.bind "condVarName" varDecl (hasType (isInteger)))))))
-      (hasRHS
-        (expr (hasType (isInteger)))))))
-*/
+  #include "matcher.h"
+  ;
 
 class LoopPrinter : public MatchFinder::MatchCallback {
 public :
