@@ -4,8 +4,8 @@ build/bin/clang-noodle: build/Makefile matcher.h LoopConvert.cpp
 build/Makefile: CMakeLists.txt
 	mkdir -p build && cd build && cmake ..
 
-matcher.h: matcher.rkt convert.rkt
-	>matcher.h <matcher.rkt racket convert.rkt
+matcher.h: matcher.rkt convert-matcher.rkt
+	>matcher.h <matcher.rkt racket convert-matcher.rkt
 	clang-format -i matcher.h
 
 corpus/code.ast.json: corpus/code.cpp Makefile
