@@ -87,6 +87,10 @@ set_target_properties(clang-noodle PROPERTIES
   CXX_EXTENSIONS OFF
 )
 
+# Let's try producing a chrome://tracing compatible JSON file that traces the
+# compilation.
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftime-trace")
+
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
 
 target_compile_definitions(clang-noodle PRIVATE

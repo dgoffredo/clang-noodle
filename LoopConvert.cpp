@@ -1,9 +1,9 @@
+#include "clang/ASTMatchers/ASTMatchFinder.h"
+#include "clang/ASTMatchers/ASTMatchers.h"
 #include "clang/Frontend/FrontendActions.h" // clang::SyntaxOnlyAction
 #include "clang/Tooling/CommonOptionsParser.h"
 #include "clang/Tooling/Tooling.h"
 #include "llvm/Support/CommandLine.h" // llvm::cl::extrahelp
-#include "clang/ASTMatchers/ASTMatchers.h"
-#include "clang/ASTMatchers/ASTMatchFinder.h"
 
 using namespace clang::tooling;
 using namespace llvm;
@@ -12,14 +12,31 @@ using namespace clang;
 using namespace clang::ast_matchers;
 
 StatementMatcher LoopMatcher =
-  #include "matcher.h"
-  ;
+#include "matcher.h"
+    ;
+
+static bool areSameVariable(const ValueDecl *First, const ValueDecl *Second) {
+  return First && Second &&
+         First->getCanonicalDecl() == Second->getCanonicalDecl();
+}
 
 class LoopPrinter : public MatchFinder::MatchCallback {
-public :
+public:
   void run(const MatchFinder::MatchResult &Result) override {
-    if (const ForStmt *FS = Result.Nodes.getNodeAs<clang::ForStmt>("forLoop"))
-      FS->dumpColor();
+    ASTContext *Context = Result.Context;
+    const ForStmt *FS = Result.Nodes.getNodeAs<ForStmt>("forLoop");
+    // We do not want to convert header files!
+    if (!FS ||
+        !Context->getSourceManager().isWrittenInMainFile(FS->getForLoc()))
+      return;
+    const VarDecl *IncVar = Result.Nodes.getNodeAs<VarDecl>("incVarName");
+    const VarDecl *CondVar = Result.Nodes.getNodeAs<VarDecl>("condVarName");
+    const VarDecl *InitVar = Result.Nodes.getNodeAs<VarDecl>("initVarName");
+
+    if (!areSameVariable(IncVar, CondVar) || !areSameVariable(IncVar, InitVar))
+      return;
+    llvm::outs() << "Potential array-based loop discovered:\n\n";
+    FS->dumpColor();
   }
 };
 
@@ -42,7 +59,7 @@ int main(int argc, const char **argv) {
     llvm::errs() << ExpectedParser.takeError();
     return 1;
   }
-  CommonOptionsParser& OptionsParser = ExpectedParser.get();
+  CommonOptionsParser &OptionsParser = ExpectedParser.get();
   ClangTool Tool(OptionsParser.getCompilations(),
                  OptionsParser.getSourcePathList());
 
