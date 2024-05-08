@@ -156,7 +156,7 @@
       "kind": "FunctionDecl",
       "loc": {
         "offset": 4,
-        "file": "corpus/code.cpp",
+        "file": "corpus/loop.cpp",
         "line": 1,
         "col": 5,
         "tokLen": 4

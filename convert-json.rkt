@@ -1,7 +1,7 @@
 #lang racket
 
-; $ clang -Xclang -ast-dump=json -c -o /dev/null corpus/code.cpp >corpus/code.ast.json
-; $ racket convert-json.rkt <corpus/code.ast.json
+; $ clang -Xclang -ast-dump=json -c -o /dev/null corpus/loop.cpp >corpus/loop.ast.json
+; $ racket convert-json.rkt <corpus/loop.ast.json
 
 (require json)
 
