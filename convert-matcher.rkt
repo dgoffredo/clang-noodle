@@ -5,16 +5,9 @@
   (match expr
     [(list 'bind (? string? name) (? symbol? matcher) args ...)
      (string-append (recur (cons matcher args)) ".bind(" (recur name) ")")]
-  
-    [(list (? symbol? matcher) arg args ...)
-     (let ([args++
-             (apply string-append
-               (for/list ([term args])
-                 (string-append ", " (recur term))))])
-       (string-append (recur matcher) "(" (recur arg) args++ ")"))]
-    
-    [(list (? symbol? matcher))
-     (string-append (recur matcher) "()")]
+
+    [(list (? symbol? matcher) args ...)
+      (string-append (recur matcher) "(" (string-join (map recur args) ", ") ")")]
     
     [atom (~s atom)]))
 
